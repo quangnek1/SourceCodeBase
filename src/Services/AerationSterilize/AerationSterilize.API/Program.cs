@@ -25,6 +25,8 @@ try
     builder.Services.ConfigureSqlServerRetryOptions(builder.Configuration);
     builder.Services.AddSqlConfiguration(builder.Configuration);
     builder.Services.AddRepositoryBaseConfiguration();
+    builder.Services.AddConfigurationOptions(builder.Configuration);
+    builder.Services.ConfigureCors(builder.Configuration);
 
     builder.Services.AddFluentValidationAutoValidation();
 
@@ -45,9 +47,11 @@ try
     {
         app.ConfigureSwagger();
     }
+    app.UseCors("CorsPolicy");
 
     //app.UseHttpsRedirection();
 
+    app.UseAuthentication();
     app.UseAuthorization();
 
     app.MapControllers();

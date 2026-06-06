@@ -1,7 +1,6 @@
-﻿using AerationSterilize.API.DependencyInjection.Options;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.SwaggerUI;
+﻿using AerationSterilize.Application.DependencyInjection.Extensions;
+using Contracts.Identity;
+using Infrastructure.Identity;
 
 namespace AerationSterilize.API.DependencyInjection.Extensions;
 
@@ -18,6 +17,9 @@ public static class ServiceCollectionExtensions
     public static void ConfigureCors(this IServiceCollection services, IConfiguration configuration)
     {
         var origins = configuration["AllowOrigins"];
+
+        services.AddTransient<ITokenService, TokenService>();
+        services.AddConfigureJWTAuthentication(configuration);
         services.AddCors(option =>
         {
             option.AddPolicy("CorsPolicy", buider =>
@@ -28,5 +30,7 @@ public static class ServiceCollectionExtensions
             });
         });
     }
+
+
 }
 
