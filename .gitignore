@@ -111,3 +111,8 @@ publish/
 # Logs
 logs/
 *.log
+
+#Environment
+appsettings.json
+appsettings.Development.json
+/src/Services/AerationSterilize/AerationSterilize.API/appsettings.json
