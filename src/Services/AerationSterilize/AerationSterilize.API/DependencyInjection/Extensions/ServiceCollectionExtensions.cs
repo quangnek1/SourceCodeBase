@@ -1,4 +1,6 @@
 ﻿using AerationSterilize.API.Authorization;
+using AerationSterilize.API.Services;
+using AerationSterilize.Application.Common;
 using AerationSterilize.Application.DependencyInjection.Extensions;
 using AerationSterilize.Persistence.Services;
 using Contracts.Identity;
@@ -39,6 +41,8 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
         services.AddAuthorization();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUser, CurrentUser>();
     }
 
 }

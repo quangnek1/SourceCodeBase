@@ -19,6 +19,8 @@ public class AppUser : IdentityUser<Guid>
 
     public Guid PositionId { get; set; }
 
+    public Guid? DepartmentId { get; set; }
+
     public int IsReceipient { get; set; }
 
     public virtual ICollection<IdentityUserClaim<Guid>> Claims { get; set; }

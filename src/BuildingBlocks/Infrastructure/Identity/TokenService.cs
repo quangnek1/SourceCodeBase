@@ -49,7 +49,11 @@ public class TokenService : ITokenService
         };
 
         claims.AddRange(request.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
-        claims.AddRange(request.Permissions.Select(p => new Claim(PermissionClaim.Type, p)));
+        foreach (var p in request.Permissions)
+        {
+            claims.Add(new Claim(PermissionClaim.Type, p.Code));                       // "ORDER.VIEW"
+            claims.Add(new Claim(PermissionClaim.LevelType, $"{p.Code}:{(int)p.Level}")); // "ORDER.VIEW:1"
+        }
 
         var accessTokenExpiry = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes);
 

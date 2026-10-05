@@ -19,6 +19,7 @@ public static class CommandCode
 public static class PermissionClaim
 {
     public const string Type = "permission";
+    public const string LevelType = "permission_level";
 
     // "PRODUCT" + "VIEW" => "PRODUCT.VIEW"
     public static string Build(string functionId, string actionId) => $"{functionId}.{actionId}";
