@@ -1,9 +1,14 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using AerationSterilize.Domain.Entities.Identity;
 using Contracts.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Common.Constants.Authorization;
 using Shared.DTOs.Identity;
 using Shared.Options;
 
@@ -11,6 +16,9 @@ namespace Infrastructure.Identity;
 public class TokenService : ITokenService
 {
     private readonly JwtOptions _jwtOptions;
+    private readonly UserManager<AppUser> _userManager;
+    //private readonly RoleManager<AppRole> _roleManager;
+
     public TokenService(JwtOptions jwtOptions)
     {
         _jwtOptions = jwtOptions ?? throw new ArgumentNullException(nameof(jwtOptions));
@@ -40,8 +48,8 @@ public class TokenService : ITokenService
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
-        claims.AddRange(request.Roles.Select(role =>
-          new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(request.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
+        claims.AddRange(request.Permissions.Select(p => new Claim(PermissionClaim.Type, p)));
 
         var accessTokenExpiry = DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes);
 

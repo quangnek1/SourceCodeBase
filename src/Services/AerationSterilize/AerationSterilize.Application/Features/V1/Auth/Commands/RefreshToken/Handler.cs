@@ -13,14 +13,17 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
     private readonly IRepositoryBase<UserSession, int> _userSessionRepository;
     private readonly UserManager<AppUser> _userManager;
     private readonly ITokenService _tokenService;
+    private readonly IPermissionService _permissionService;
 
     public RefreshTokenCommandHandler(IRepositoryBase<UserSession, int> userSessionRepository,
        ITokenService tokenService,
-       UserManager<AppUser> userManager)
+       UserManager<AppUser> userManager,
+       IPermissionService permissionService)
     {
         _userSessionRepository = userSessionRepository ?? throw new ArgumentNullException(nameof(userSessionRepository));
         _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+        _permissionService = permissionService ?? throw new ArgumentNullException(nameof(permissionService));
     }
 
     public async Task<Result<LoginDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
@@ -34,8 +37,10 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
         tokenEntity.IsRevoked = true;
 
         var roles = await _userManager.GetRolesAsync(tokenEntity.User);
+        var permissions = await _permissionService.GetPermissionsAsync(user.Id, cancellationToken);
 
-        var tokenRequest = new TokenRequest(user.Id, user.UserName!, roles);
+        var tokenRequest = new TokenRequest(user.Id, user.UserName!, roles, permissions);
+
         var token = _tokenService.GetToken(tokenRequest);
 
         var userSession = new UserSession

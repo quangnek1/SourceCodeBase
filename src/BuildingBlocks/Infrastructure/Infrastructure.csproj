@@ -15,6 +15,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Services\AerationSterilize\AerationSterilize.Domain\AerationSterilize.Domain.csproj" />
 		<ProjectReference Include="..\Common.Logging\Common.Logging.csproj" />
 		<ProjectReference Include="..\Contracts\Contracts.csproj" />
 		<ProjectReference Include="..\Shared\Shared.csproj" />

@@ -1,6 +1,9 @@
-﻿using AerationSterilize.Application.DependencyInjection.Extensions;
+﻿using AerationSterilize.API.Authorization;
+using AerationSterilize.Application.DependencyInjection.Extensions;
+using AerationSterilize.Persistence.Services;
 using Contracts.Identity;
 using Infrastructure.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AerationSterilize.API.DependencyInjection.Extensions;
 
@@ -31,6 +34,12 @@ public static class ServiceCollectionExtensions
         });
     }
 
+    public static void AddAuthorizationConfigurationAPI(this IServiceCollection services)
+    {
+        services.AddScoped<IPermissionService, PermissionService>();
+        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
+        services.AddAuthorization();
+    }
 
 }
 

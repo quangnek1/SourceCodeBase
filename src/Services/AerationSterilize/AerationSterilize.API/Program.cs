@@ -27,6 +27,7 @@ try
     builder.Services.AddRepositoryBaseConfiguration();
     builder.Services.AddConfigurationOptions(builder.Configuration);
     builder.Services.ConfigureCors(builder.Configuration);
+    builder.Services.AddAuthorizationConfigurationAPI();
 
     builder.Services.AddFluentValidationAutoValidation();
 

@@ -1,4 +1,5 @@
 ﻿using AerationSterilize.API.Abstractions;
+using AerationSterilize.API.Authorization;
 using AerationSterilize.Application.Features.V1.Products.Commands.CreateProduct;
 using AerationSterilize.Application.Features.V1.Products.Commands.DeleteProduct;
 using AerationSterilize.Application.Features.V1.Products.Commands.UpdateProduct;
@@ -9,8 +10,8 @@ using Asp.Versioning;
 using Contracts.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Common.Constants.Authorization;
 using Shared.Emumerations;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace AerationSterilize.API.Controllers.V1;
 
@@ -24,6 +25,7 @@ public class ProductsController : ApiController
     [HttpGet(Name = "GetProducts")]
     [ProducesResponseType(type: typeof(Result<IEnumerable<ProductDto>>), statusCode: StatusCodes.Status200OK)]
     [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+    [Permission(FunctionCode.PRODUCT, CommandCode.VIEW)]
     public async Task<IActionResult> GetProducts(string? searchTerm = null,
        string? sortColumn = null,
        string? sortOrder = null,
@@ -41,6 +43,7 @@ public class ProductsController : ApiController
     [HttpGet("{productId}")]
     [ProducesResponseType(type: typeof(Result<ProductDto>), statusCode: StatusCodes.Status200OK)]
     [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+    [Permission(FunctionCode.PRODUCT, CommandCode.VIEW)]
     public async Task<IActionResult> GetProductById(Guid productId)
     {
         var result = await Sender.Send(new GetProductByIdQuery(productId));
