@@ -19,3 +19,8 @@
 	2. dotnet CLI: "dotnet ef migrations remove [options]"
 	=>> EX-PMC: "Remove-Migration"
 	dotnet ef migrations remove -p AerationSterilize.Persistence --startup-project AerationSterilize.API
+
+## CommonServices (master data)
+	dotnet ef migrations add "MigrationName" --project CommonServices/CommonServices.Persistence --startup-project CommonServices/CommonServices.API --output-dir Migrations
+	dotnet ef database update --project CommonServices/CommonServices.Persistence --startup-project CommonServices/CommonServices.API
+	(The API also applies pending migrations and seeds data on startup. Default login: admin / Admin@123)
