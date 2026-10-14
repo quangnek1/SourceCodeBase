@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using AerationSterilize.Application.Common;
 using Shared.Common.Constants.Authorization;
 
@@ -15,6 +16,13 @@ public sealed class CurrentUser : ICurrentUser
 
     public Guid? DepartmentId =>
         Guid.TryParse(_user.FindFirstValue("department_id"), out var id) ? id : null;
+
+    public string? TokenId => _user.FindFirstValue(JwtRegisteredClaimNames.Jti);
+
+    public DateTimeOffset? TokenExpiresAt =>
+        long.TryParse(_user.FindFirstValue(JwtRegisteredClaimNames.Exp), out var exp)
+            ? DateTimeOffset.FromUnixTimeSeconds(exp)
+            : null;
 
     public AccessLevel GetAccessLevel(string functionCode, string commandCode)
     {

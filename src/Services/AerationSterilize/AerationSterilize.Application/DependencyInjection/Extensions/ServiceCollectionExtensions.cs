@@ -1,5 +1,7 @@
 ﻿using System.Text;
 using AerationSterilize.Application.Behaviors;
+using Infrastructure.Behaviors;
+using Contracts.Identity;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -24,6 +26,8 @@ public static class ServiceCollectionExtensions
             .AddValidatorsFromAssembly(AssemblyReference.Assembly, includeInternalTypes: true)
             .AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>))
             .AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>))
+            .AddTransient(typeof(IPipelineBehavior<,>), typeof(CacheInvalidationPipelineBehavior<,>))
+            .AddTransient(typeof(IPipelineBehavior<,>), typeof(QueryCachingPipelineBehavior<,>))
             .AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionPipelineBehavior<,>))
             ;
         return services;
@@ -72,6 +76,23 @@ public static class ServiceCollectionExtensions
             x.SaveToken = true;
             x.RequireHttpsMetadata = false;
             x.TokenValidationParameters = tokenValidationParameters;
+            x.Events = new JwtBearerEvents
+            {
+                // Reject access tokens that were revoked on logout, even though their signature and lifetime are still valid.
+                OnTokenValidated = async context =>
+                {
+                    var jti = context.SecurityToken?.Id;
+                    if (string.IsNullOrEmpty(jti))
+                    {
+                        context.Fail("Token has no jti.");
+                        return;
+                    }
+
+                    var tokenRevocationService = context.HttpContext.RequestServices.GetRequiredService<ITokenRevocationService>();
+                    if (await tokenRevocationService.IsRevokedAsync(jti, context.HttpContext.RequestAborted))
+                        context.Fail("Token has been revoked.");
+                }
+            };
         });
 
         return services;

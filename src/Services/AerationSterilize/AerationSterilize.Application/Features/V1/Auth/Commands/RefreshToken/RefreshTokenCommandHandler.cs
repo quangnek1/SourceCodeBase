@@ -28,15 +28,17 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
 
     public async Task<Result<LoginDto>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var tokenEntity = await _userSessionRepository.FindSingleAsync(us => us.RefreshToken == request.RefreshToken, cancellationToken)
-            ?? throw new Exception("Invalid refresh token");
+        var tokenEntity = await _userSessionRepository.FindSingleAsync(us => us.RefreshToken == request.RefreshToken, cancellationToken);
+        if (tokenEntity is null || tokenEntity.IsRevoked || tokenEntity.ExpiredAt <= DateTime.UtcNow)
+            throw new Exception("Invalid refresh token");
 
-        var user = await _userManager.FindByIdAsync(tokenEntity.UserId.ToString());
+        var user = await _userManager.FindByIdAsync(tokenEntity.UserId.ToString())
+            ?? throw new Exception("User not found");
 
         // revoke token cũ
         tokenEntity.IsRevoked = true;
 
-        var roles = await _userManager.GetRolesAsync(tokenEntity.User);
+        var roles = await _userManager.GetRolesAsync(user);
         var permissions = await _permissionService.GetPermissionsAsync(user.Id, cancellationToken);
 
         var tokenRequest = new TokenRequest(user.Id, user.UserName!, roles, permissions);

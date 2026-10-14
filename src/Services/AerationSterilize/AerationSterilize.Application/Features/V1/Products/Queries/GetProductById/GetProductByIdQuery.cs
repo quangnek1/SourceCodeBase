@@ -1,8 +1,11 @@
-﻿using AerationSterilize.Application.Features.V1.Products.Common.Dtos;
-using Contracts.Common.Messages;
-using Shared.Paging;
+using AerationSterilize.Application.Features.V1.Products.Common.Dtos;
+using AerationSterilize.Application.Features.V1.Products.Common.Caching;
+using Contracts.Caching;
 
 namespace AerationSterilize.Application.Features.V1.Products.Queries.GetProductById;
-public record GetProductByIdQuery(Guid Id) : IQuery<ProductDto>;
+public sealed record GetProductByIdQuery(Guid Id) : ICachedQuery<ProductDto>
+{
+    string ICachedQuery.CacheKey => ProductCacheKeys.ById(Id);
 
-
+    TimeSpan? ICachedQuery.Expiration => null;
+}

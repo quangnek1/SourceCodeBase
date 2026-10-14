@@ -51,7 +51,7 @@ public class ValidationPipelineBehavior<TRequest, TResponse> : IPipelineBehavior
         object validationResult = typeof(ValidationResult<>)
             .GetGenericTypeDefinition()
             .MakeGenericType(typeof(TResult).GenericTypeArguments[0])
-            .GetMethod(nameof(ValidationResult.WithErrors))!
+            .GetMethod(nameof(ValidationResult<object>.WithError))!
             .Invoke(null, new object?[] { errors })!;
 
         return (TResult)validationResult;

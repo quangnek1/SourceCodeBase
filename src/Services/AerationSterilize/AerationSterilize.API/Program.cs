@@ -1,5 +1,6 @@
 using AerationSterilize.API.DependencyInjection.Extensions;
 using AerationSterilize.Application.DependencyInjection.Extensions;
+using Infrastructure.Extensions;
 using AerationSterilize.Persistence.DependencyInjection.Extensions;
 using Common.Logging;
 using FluentValidation.AspNetCore;
@@ -28,6 +29,7 @@ try
     builder.Services.AddConfigurationOptions(builder.Configuration);
     builder.Services.ConfigureCors(builder.Configuration);
     builder.Services.AddAuthorizationConfigurationAPI();
+    builder.Services.AddRedisCache(builder.Configuration); // after AddAuthorizationConfigurationAPI: decorates IPermissionService
 
     builder.Services.AddFluentValidationAutoValidation();
 
