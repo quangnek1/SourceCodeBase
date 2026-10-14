@@ -106,6 +106,9 @@ namespace AerationSterilize.Persistence.Migrations
                     b.Property<DateTime?>("DayOfBirth")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid?>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
@@ -230,6 +233,9 @@ namespace AerationSterilize.Persistence.Migrations
                     b.Property<string>("ActionId")
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("AccessLevel")
+                        .HasColumnType("int");
+
                     b.HasKey("RoleId", "FunctionId", "ActionId");
 
                     b.HasIndex("ActionId");
@@ -274,8 +280,14 @@ namespace AerationSterilize.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid?>("DepartmentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
                         .IsRequired()

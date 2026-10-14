@@ -1,5 +1,6 @@
 ﻿using AerationSterilize.Domain.Entities;
 using AutoMapper;
+using static AerationSterilize.Domain.Exceptions.ProductException;
 using Contracts.Common.Messages;
 using Contracts.Common.Repositories;
 using Contracts.Responses;
@@ -16,7 +17,8 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
 
     public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
-        var productEntity = await _productRepository.FindByIdAsync(request.Id);
+        var productEntity = await _productRepository.FindByIdAsync(request.Id, cancellationToken)
+            ?? throw new ProductNotFoundException(request.Id);
 
         _productRepository.Remove(productEntity);
 

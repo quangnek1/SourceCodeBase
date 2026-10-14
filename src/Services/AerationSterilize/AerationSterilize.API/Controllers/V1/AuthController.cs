@@ -26,6 +26,8 @@ public class AuthController : ApiController
     public async Task<IActionResult> Login([FromForm] LoginCommand command)
     {
         var result = await Sender.Send(command);
+        if (result.IsFailure)
+            return HandleFailure(result);
 
         var cookieOptions = new CookieOptions
         {
@@ -53,7 +55,7 @@ public class AuthController : ApiController
     {
         var result = await Sender.Send(command, cancellationToken);
 
-        return Ok(result);
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 
     [HttpPost]
@@ -70,7 +72,7 @@ public class AuthController : ApiController
         var command = new RefreshTokenCommand(refreshToken);
         var result = await Sender.Send(command, cancellationToken);
 
-        return Ok(result);
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 
     [HttpPost]
@@ -89,7 +91,7 @@ public class AuthController : ApiController
 
         Response.Cookies.Delete("refreshToken");
 
-        return Ok(result);
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 
     [HttpGet]

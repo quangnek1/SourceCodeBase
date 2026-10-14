@@ -1,4 +1,5 @@
 ﻿using AerationSterilize.Domain.Entities.Identity;
+using static AerationSterilize.Domain.Exceptions.AuthException;
 using Contracts.Common.Messages;
 using Contracts.Common.Repositories;
 using Contracts.Identity;
@@ -47,7 +48,7 @@ internal class RegisterCommandHandler : ICommandHandler<RegisterCommand>
         {
             var errors = string.Join(", ", result.Errors.Select(x => x.Description));
 
-            throw new Exception(errors);
+            throw new RegisterFailedException(errors);
         }
 
         return Result.Success();

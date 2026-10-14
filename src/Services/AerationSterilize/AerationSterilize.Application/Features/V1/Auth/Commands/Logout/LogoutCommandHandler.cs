@@ -1,4 +1,5 @@
 using AerationSterilize.Application.Common;
+using static AerationSterilize.Domain.Exceptions.AuthException;
 using AerationSterilize.Domain.Entities.Identity;
 using Contracts.Caching;
 using Contracts.Common.Messages;
@@ -29,7 +30,7 @@ public class LogoutCommandHandler : ICommandHandler<LogoutCommand>
     {
         var tokenEntity = await _userSessionRepository
             .FindSingleAsync(us => us.RefreshToken == request.RefreshToken, cancellationToken)
-         ?? throw new Exception("Invalid refresh token");
+         ?? throw new InvalidRefreshTokenException();
 
         tokenEntity.IsRevoked = true;
 

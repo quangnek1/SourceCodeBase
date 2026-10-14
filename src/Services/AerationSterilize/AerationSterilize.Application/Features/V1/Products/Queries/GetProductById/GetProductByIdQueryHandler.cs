@@ -1,5 +1,6 @@
 ﻿using AerationSterilize.Application.Features.V1.Products.Common.Dtos;
 using AerationSterilize.Domain.Entities;
+using static AerationSterilize.Domain.Exceptions.ProductException;
 using AutoMapper;
 using Contracts.Common.Messages;
 using Contracts.Common.Repositories;
@@ -19,7 +20,8 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
 
     public async Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        var product = await _productRepository.FindByIdAsync(request.Id);
+        var product = await _productRepository.FindByIdAsync(request.Id, cancellationToken)
+            ?? throw new ProductNotFoundException(request.Id);
 
         var result = _mapper.Map<ProductDto>(product);
 

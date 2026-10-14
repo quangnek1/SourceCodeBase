@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using static AerationSterilize.Domain.Exceptions.AuthException;
 using AerationSterilize.Application.Features.V1.Auth.Common.Dtos;
 using AerationSterilize.Domain.Entities.Identity;
 using Contracts.Common.Messages;
@@ -31,12 +32,12 @@ internal class LoginCommandHandler : ICommandHandler<LoginCommand, LoginDto>
 
     public async Task<Result<LoginDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userManager.FindByNameAsync(request.UserName) ?? throw new Exception("Invalid account");
+        var user = await _userManager.FindByNameAsync(request.UserName) ?? throw new InvalidCredentialsException();
 
         var isValidPassword = await _userManager.CheckPasswordAsync(user, request.Password);
 
         if (!isValidPassword)
-            throw new Exception("Invalid account");
+            throw new InvalidCredentialsException();
 
 
         var results = new Dictionary<string, int>();

@@ -1,5 +1,6 @@
 ﻿using AerationSterilize.Application.Features.V1.Products.Common.Dtos;
 using AerationSterilize.Domain.Entities;
+using static AerationSterilize.Domain.Exceptions.ProductException;
 using AutoMapper;
 using Contracts.Common.Messages;
 using Contracts.Common.Repositories;
@@ -19,7 +20,8 @@ internal sealed class UpdateProductCommandHandler : ICommandHandler<UpdateProduc
     }
     public async Task<Result<ProductDto>> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
     {
-        var productEntity = await _productRepository.FindByIdAsync(request.Id);
+        var productEntity = await _productRepository.FindByIdAsync(request.Id, cancellationToken)
+            ?? throw new ProductNotFoundException(request.Id);
 
         productEntity = _mapper.Map(request, productEntity);
 

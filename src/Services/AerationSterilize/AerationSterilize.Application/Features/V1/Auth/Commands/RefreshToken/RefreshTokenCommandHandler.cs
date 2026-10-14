@@ -1,4 +1,5 @@
 ﻿using AerationSterilize.Application.Features.V1.Auth.Common.Dtos;
+using static AerationSterilize.Domain.Exceptions.AuthException;
 using AerationSterilize.Domain.Entities.Identity;
 using Contracts.Common.Messages;
 using Contracts.Common.Repositories;
@@ -30,10 +31,10 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
     {
         var tokenEntity = await _userSessionRepository.FindSingleAsync(us => us.RefreshToken == request.RefreshToken, cancellationToken);
         if (tokenEntity is null || tokenEntity.IsRevoked || tokenEntity.ExpiredAt <= DateTime.UtcNow)
-            throw new Exception("Invalid refresh token");
+            throw new InvalidRefreshTokenException();
 
         var user = await _userManager.FindByIdAsync(tokenEntity.UserId.ToString())
-            ?? throw new Exception("User not found");
+            ?? throw new InvalidRefreshTokenException();
 
         // revoke token cũ
         tokenEntity.IsRevoked = true;

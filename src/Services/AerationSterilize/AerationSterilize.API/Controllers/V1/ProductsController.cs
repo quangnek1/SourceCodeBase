@@ -37,7 +37,7 @@ public class ProductsController : ApiController
             pageIndex,
             pageSize));
 
-        return Ok(result);
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 
     [HttpGet("{productId}")]
@@ -47,7 +47,7 @@ public class ProductsController : ApiController
     public async Task<IActionResult> GetProductById(Guid productId)
     {
         var result = await Sender.Send(new GetProductByIdQuery(productId));
-        return Ok(result);
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 
     [HttpPost(Name = "CreateProducts")]
@@ -57,7 +57,7 @@ public class ProductsController : ApiController
     {
         var result = await Sender.Send(command);
 
-        return Ok(result);
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 
     [HttpDelete("{productId}")]
@@ -66,7 +66,7 @@ public class ProductsController : ApiController
     public async Task<IActionResult> DeleteProduct(Guid productId)
     {
         var result = await Sender.Send(new DeleteProductCommand(productId));
-        return Ok(result);
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 
     [HttpPut("{productId}")]
@@ -76,6 +76,6 @@ public class ProductsController : ApiController
     {
         command.SetId(productId);
         var result = await Sender.Send(command);
-        return Ok(result);
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 }
