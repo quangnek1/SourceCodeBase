@@ -1,13 +1,16 @@
 ﻿using System.Threading;
 using AerationSterilize.API.Abstractions;
+using AerationSterilize.API.Authorization;
 using AerationSterilize.Application.Features.V1.Auth.Commands.Login;
 using AerationSterilize.Application.Features.V1.Auth.Commands.Logout;
 using AerationSterilize.Application.Features.V1.Auth.Commands.RefreshToken;
 using AerationSterilize.Application.Features.V1.Auth.Commands.Register;
+using AerationSterilize.Application.Features.V1.Auth.Queries.GetMe;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Common.Constants.Authorization;
 
 namespace AerationSterilize.API.Controllers.V1;
 
@@ -46,9 +49,10 @@ public class AuthController : ApiController
         });
     }
 
+    // Accounts are created by an administrator; open self-registration is not allowed.
     [HttpPost]
     [Route("register")]
-    [AllowAnonymous]
+    [Permission(FunctionCode.USER, CommandCode.CREATE)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Register([FromBody] RegisterCommand command, CancellationToken cancellationToken)
@@ -99,8 +103,9 @@ public class AuthController : ApiController
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Me()
+    public async Task<IActionResult> Me(CancellationToken cancellationToken)
     {
-        return Ok();
+        var result = await Sender.Send(new GetMeQuery(), cancellationToken);
+        return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 }

@@ -19,7 +19,7 @@ public class PermissionService : IPermissionService
             join p in _context.Permissions on ur.RoleId equals p.RoleId
             join f in _context.Functions on p.FunctionId equals f.Id
             join a in _context.Actions on p.ActionId equals a.Id
-            where ur.UserId == userId && f.IsActive == true && a.IsActive == true
+            where ur.UserId == userId && f.IsActive == true && a.IsActive == true && p.AccessLevel != AccessLevel.None
             select new { p.FunctionId, p.ActionId, p.AccessLevel })
         .ToListAsync(cancellationToken);
 

@@ -51,6 +51,7 @@ public class ProductsController : ApiController
     }
 
     [HttpPost(Name = "CreateProducts")]
+    [Permission(FunctionCode.PRODUCT, CommandCode.CREATE)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateProducts([FromBody] CreateProductCommand command)
@@ -61,6 +62,7 @@ public class ProductsController : ApiController
     }
 
     [HttpDelete("{productId}")]
+    [Permission(FunctionCode.PRODUCT, CommandCode.DELETE)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteProduct(Guid productId)
@@ -70,6 +72,7 @@ public class ProductsController : ApiController
     }
 
     [HttpPut("{productId}")]
+    [Permission(FunctionCode.PRODUCT, CommandCode.UPDATE)]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateProductById(Guid productId, [FromBody] UpdateProductCommand command)

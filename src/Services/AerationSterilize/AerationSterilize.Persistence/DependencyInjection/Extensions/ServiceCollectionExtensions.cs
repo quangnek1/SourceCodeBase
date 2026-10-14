@@ -1,4 +1,5 @@
 ﻿using AerationSterilize.Domain.Entities.Identity;
+using AerationSterilize.Domain.Repositories;
 using AerationSterilize.Persistence.DependencyInjection.Options;
 using AerationSterilize.Persistence.Repositories;
 using Contracts.Common.Repositories;
@@ -17,6 +18,7 @@ public static class ServiceCollectionExtensions
     => services
         .AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork<ApplicationDbContext>))
         .AddScoped(typeof(IRepositoryBase<,>), typeof(ApplicationRepository<,>))
+        .AddScoped<IPermissionRepository, PermissionRepository>()
         ;
 
     public static void AddSqlConfiguration(this IServiceCollection services, IConfiguration configuration)

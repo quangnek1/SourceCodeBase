@@ -10,7 +10,8 @@ internal sealed class AppUserRoleConfiguration : IEntityTypeConfiguration<Identi
     {
         builder.ToTable(TableNames.AppUserRoles);
 
-        builder.HasKey(x => new { x.RoleId, x.UserId });
+        // Same order as ASP.NET Identity: UserStore looks rows up with FindAsync(userId, roleId).
+        builder.HasKey(x => new { x.UserId, x.RoleId });
     }
 }
 
