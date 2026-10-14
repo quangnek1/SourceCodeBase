@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 
 namespace AerationSterilize.Application.Features.V1.Products.Queries.GetProducts;
-public class GetProductsValidator : AbstractValidator<GetProductsQuery>
+public class GetProductsQueryValidator : AbstractValidator<GetProductsQuery>
 {
-    public GetProductsValidator()
+    public GetProductsQueryValidator()
     {
         RuleFor(x => x.sortColumn)
            .NotEmpty()

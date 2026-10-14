@@ -3,4 +3,4 @@ public sealed record TokenRequest(
     Guid UserId,
     string UserName,
     IList<string> Roles,
-    IReadOnlyList<string> Permissions);
+    IReadOnlyList<UserPermission> Permissions);
