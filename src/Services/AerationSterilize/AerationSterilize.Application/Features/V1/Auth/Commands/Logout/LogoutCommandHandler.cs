@@ -4,10 +4,10 @@ using Contracts.Common.Repositories;
 using Contracts.Responses;
 
 namespace AerationSterilize.Application.Features.V1.Auth.Commands.Logout;
-public class LogoutCommandHanlder : ICommandHandler<LogoutCommand>
+public class LogoutCommandHandler : ICommandHandler<LogoutCommand>
 {
     private readonly IRepositoryBase<UserSession, int> _userSessionRepository;
-    public LogoutCommandHanlder(IRepositoryBase<UserSession, int> userSessionRepository)
+    public LogoutCommandHandler(IRepositoryBase<UserSession, int> userSessionRepository)
     {
         _userSessionRepository = userSessionRepository ?? throw new ArgumentNullException(nameof(userSessionRepository));
     }

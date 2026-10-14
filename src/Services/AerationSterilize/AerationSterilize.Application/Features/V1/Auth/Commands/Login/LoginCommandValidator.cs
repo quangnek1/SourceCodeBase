@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 
 namespace AerationSterilize.Application.Features.V1.Auth.Commands.Login;
-internal class LoginValidator : AbstractValidator<LoginCommand>
+internal class LoginCommandValidator : AbstractValidator<LoginCommand>
 {
-    public LoginValidator()
+    public LoginCommandValidator()
     {
         RuleFor(x => x.UserName)
             .NotEmpty();
