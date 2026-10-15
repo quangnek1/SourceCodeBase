@@ -1,4 +1,4 @@
-using CommonServices.API.DependencyInjection.Extensions;
+﻿using CommonServices.API.DependencyInjection.Extensions;
 using CommonServices.Application.DependencyInjection.Extensions;
 using Infrastructure.Extensions;
 using CommonServices.Persistence.DependencyInjection.Extensions;
@@ -26,10 +26,9 @@ try
     builder.Services.ConfigureSqlServerRetryOptions(builder.Configuration);
     builder.Services.AddSqlConfiguration(builder.Configuration);
     builder.Services.AddRepositoryBaseConfiguration();
-    builder.Services.AddConfigurationOptions(builder.Configuration);
     builder.Services.ConfigureCors(builder.Configuration);
     builder.Services.AddAuthorizationConfigurationAPI();
-    builder.Services.AddRedisCache(builder.Configuration); // after AddAuthorizationConfigurationAPI: decorates IPermissionService
+    builder.Services.AddRedisCache(builder.Configuration); // token revocation list shared with AerationSterilize
 
     builder.Services.AddFluentValidationAutoValidation();
 

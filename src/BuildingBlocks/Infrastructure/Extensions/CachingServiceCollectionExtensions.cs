@@ -12,7 +12,8 @@ namespace Infrastructure.Extensions;
 public static class CachingServiceCollectionExtensions
 {
     // Registers the Redis cache shared by all services.
-    // Must be called after IPermissionService has been registered, because it decorates that registration.
+    // In the identity service (AerationSterilize) it must be called after IPermissionService has been registered,
+    // because it decorates that registration. Services without IPermissionService (they only read the token) skip it.
     public static IServiceCollection AddRedisCache(this IServiceCollection services, IConfiguration configuration)
     {
         services
@@ -32,7 +33,8 @@ public static class CachingServiceCollectionExtensions
 
         services.AddSingleton<ICacheService, RedisCacheService>();
         services.AddSingleton<ITokenRevocationService, RedisTokenRevocationService>();
-        services.Decorate<IPermissionService, CachedPermissionService>();
+        if (services.Any(d => d.ServiceType == typeof(IPermissionService)))
+            services.Decorate<IPermissionService, CachedPermissionService>();
 
         return services;
     }

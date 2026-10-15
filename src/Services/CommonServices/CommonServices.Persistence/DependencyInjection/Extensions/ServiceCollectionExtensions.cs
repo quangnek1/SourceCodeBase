@@ -1,9 +1,7 @@
-﻿using CommonServices.Domain.Entities.Identity;
-using CommonServices.Persistence.DependencyInjection.Options;
+﻿using CommonServices.Persistence.DependencyInjection.Options;
 using CommonServices.Persistence.Repositories;
 using Contracts.Common.Repositories;
 using Infrastructure.Common;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,22 +40,6 @@ public static class ServiceCollectionExtensions
 
 
         });
-
-        services.AddIdentity<AppUser, AppRole>(opt =>
-        {
-            opt.Lockout.AllowedForNewUsers = true;
-            opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(2);
-            opt.Lockout.MaxFailedAccessAttempts = 3;
-
-            opt.Password.RequireDigit = false;
-            opt.Password.RequireLowercase = false;
-            opt.Password.RequireNonAlphanumeric = false;
-            opt.Password.RequireUppercase = false;
-            opt.Password.RequiredLength = 6;
-            opt.Password.RequiredUniqueChars = 1;
-        })
-        .AddEntityFrameworkStores<ApplicationDbContext>()
-        .AddDefaultTokenProviders();
     }
 
     public static OptionsBuilder<SqlServerRetryOptions> ConfigureSqlServerRetryOptions(this IServiceCollection services, IConfiguration configuration)

@@ -4,6 +4,7 @@ using AerationSterilize.Domain.Entities;
 using AutoMapper;
 using Contracts.Common.Messages;
 using Contracts.Common.Repositories;
+using Contracts.Identity;
 using Contracts.Responses;
 using Shared.Emumerations;
 using Shared.Paging;
@@ -25,6 +26,8 @@ public class GetProductsQueryHandler : IQueryHandler<GetProductsQuery, PagedResu
         var productsQuery = string.IsNullOrWhiteSpace(request.searchTerm)
           ? _productRepository.FindAll()
           : _productRepository.FindAll(x => x.Name.Contains(request.searchTerm) || x.Description.Contains(request.searchTerm));
+
+        productsQuery = productsQuery.ApplyDataScope(request.Scope);
 
         var sortExpression = ProductExtension.GetSortExpression(request.sortColumn);
 

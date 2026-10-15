@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Shared.Common.Constants.Authorization;
 
-namespace AerationSterilize.API.Authorization;
+namespace Infrastructure.Authorization;
 
 public class PermissionRequirement : IAuthorizationRequirement
 {

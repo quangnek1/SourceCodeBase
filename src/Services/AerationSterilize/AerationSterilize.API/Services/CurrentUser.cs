@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AerationSterilize.Application.Common;
+using Contracts.Identity;
 using Shared.Common.Constants.Authorization;
 
 namespace AerationSterilize.API.Services;
@@ -15,7 +16,7 @@ public sealed class CurrentUser : ICurrentUser
     public Guid UserId => Guid.Parse(_user.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     public Guid? DepartmentId =>
-        Guid.TryParse(_user.FindFirstValue("department_id"), out var id) ? id : null;
+        Guid.TryParse(_user.FindFirstValue(UserClaim.DepartmentId), out var id) ? id : null;
 
     public string? TokenId => _user.FindFirstValue(JwtRegisteredClaimNames.Jti);
 
@@ -34,4 +35,7 @@ public sealed class CurrentUser : ICurrentUser
             ? (AccessLevel)level
             : AccessLevel.None;
     }
+
+    public DataScope GetDataScope(string functionCode, string commandCode)
+        => new(GetAccessLevel(functionCode, commandCode), UserId, DepartmentId);
 }

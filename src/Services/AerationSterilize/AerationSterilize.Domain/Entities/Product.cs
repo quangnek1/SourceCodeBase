@@ -7,8 +7,9 @@ public class Product : EntityAuditBase<Guid>, IDataOwned
     public string Name { get; private set; }
     public decimal Price { get; private set; }
     public string Description { get; private set; }
-    public Guid? CreatedBy { get; set; } = Guid.NewGuid();
-    public Guid? DepartmentId { get; set; } = Guid.NewGuid();
+    // Owner of the row, used by the data scope (AccessLevel.Own / AccessLevel.Department). Set on create.
+    public Guid? CreatedBy { get; set; }
+    public Guid? DepartmentId { get; set; }
 
     private Product() { }
 

@@ -1,5 +1,6 @@
 ﻿using AerationSterilize.API.Abstractions;
-using AerationSterilize.API.Authorization;
+using AerationSterilize.Application.Common;
+using Infrastructure.Authorization;
 using AerationSterilize.Application.Features.V1.Products.Commands.CreateProduct;
 using AerationSterilize.Application.Features.V1.Products.Commands.DeleteProduct;
 using AerationSterilize.Application.Features.V1.Products.Commands.UpdateProduct;
@@ -18,8 +19,11 @@ namespace AerationSterilize.API.Controllers.V1;
 [ApiVersion(1)]
 public class ProductsController : ApiController
 {
-    public ProductsController(ISender sender) : base(sender)
+    private readonly ICurrentUser _currentUser;
+
+    public ProductsController(ISender sender, ICurrentUser currentUser) : base(sender)
     {
+        _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
     }
 
     [HttpGet(Name = "GetProducts")]
@@ -35,7 +39,8 @@ public class ProductsController : ApiController
         var result = await Sender.Send(new GetProductsQuery(searchTerm, sortColumn,
             SortOrderExtension.ConvertStringToSortOrder(sortOrder),
             pageIndex,
-            pageSize));
+            pageSize,
+            _currentUser.GetDataScope(FunctionCode.PRODUCT, CommandCode.VIEW)));
 
         return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
@@ -46,13 +51,14 @@ public class ProductsController : ApiController
     [Permission(FunctionCode.PRODUCT, CommandCode.VIEW)]
     public async Task<IActionResult> GetProductById(Guid productId)
     {
-        var result = await Sender.Send(new GetProductByIdQuery(productId));
+        var result = await Sender.Send(new GetProductByIdQuery(productId, _currentUser.GetDataScope(FunctionCode.PRODUCT, CommandCode.VIEW)));
         return result.IsFailure ? HandleFailure(result) : Ok(result);
     }
 
     [HttpPost(Name = "CreateProducts")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Permission(FunctionCode.PRODUCT, CommandCode.CREATE)]
     public async Task<IActionResult> CreateProducts([FromBody] CreateProductCommand command)
     {
         var result = await Sender.Send(command);
@@ -63,6 +69,7 @@ public class ProductsController : ApiController
     [HttpDelete("{productId}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Permission(FunctionCode.PRODUCT, CommandCode.DELETE)]
     public async Task<IActionResult> DeleteProduct(Guid productId)
     {
         var result = await Sender.Send(new DeleteProductCommand(productId));
@@ -72,6 +79,7 @@ public class ProductsController : ApiController
     [HttpPut("{productId}")]
     [ProducesResponseType(typeof(Result), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [Permission(FunctionCode.PRODUCT, CommandCode.UPDATE)]
     public async Task<IActionResult> UpdateProductById(Guid productId, [FromBody] UpdateProductCommand command)
     {
         command.SetId(productId);

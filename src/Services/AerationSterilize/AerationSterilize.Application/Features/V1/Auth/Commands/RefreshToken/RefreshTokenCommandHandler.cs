@@ -42,7 +42,7 @@ public class RefreshTokenCommandHandler : ICommandHandler<RefreshTokenCommand, L
         var roles = await _userManager.GetRolesAsync(user);
         var permissions = await _permissionService.GetPermissionsAsync(user.Id, cancellationToken);
 
-        var tokenRequest = new TokenRequest(user.Id, user.UserName!, roles, permissions);
+        var tokenRequest = new TokenRequest(user.Id, user.UserName!, user.DepartmentId, roles, permissions);
 
         var token = _tokenService.GetToken(tokenRequest);
 

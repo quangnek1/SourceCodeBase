@@ -1,4 +1,5 @@
-﻿using Shared.Common.Constants.Authorization;
+﻿using Contracts.Identity;
+using Shared.Common.Constants.Authorization;
 
 namespace AerationSterilize.Application.Common;
 public interface ICurrentUser
@@ -8,4 +9,5 @@ public interface ICurrentUser
     string? TokenId { get; }
     DateTimeOffset? TokenExpiresAt { get; }
     AccessLevel GetAccessLevel(string functionCode, string commandCode);
+    DataScope GetDataScope(string functionCode, string commandCode);
 }

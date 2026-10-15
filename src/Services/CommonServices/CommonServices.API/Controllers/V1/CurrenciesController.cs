@@ -1,6 +1,6 @@
 using Asp.Versioning;
 using CommonServices.API.Abstractions;
-using CommonServices.API.Authorization;
+using Infrastructure.Authorization;
 using CommonServices.Application.Features.V1.Currencies.Commands.CreateCurrency;
 using CommonServices.Application.Features.V1.Currencies.Commands.DeleteCurrency;
 using CommonServices.Application.Features.V1.Currencies.Commands.SetCurrencyStatus;

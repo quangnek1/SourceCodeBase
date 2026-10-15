@@ -48,6 +48,9 @@ public class TokenService : ITokenService
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
+        if (request.DepartmentId is { } departmentId)
+            claims.Add(new Claim(UserClaim.DepartmentId, departmentId.ToString()));
+
         claims.AddRange(request.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
         foreach (var p in request.Permissions)
         {

@@ -20,8 +20,11 @@ public class GetProductByIdQueryHandler : IQueryHandler<GetProductByIdQuery, Pro
 
     public async Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        var product = await _productRepository.FindByIdAsync(request.Id, cancellationToken)
-            ?? throw new ProductNotFoundException(request.Id);
+        var product = await _productRepository.FindByIdAsync(request.Id, cancellationToken);
+
+        // Outside the user's data scope is reported as not found, so the product's existence is not revealed.
+        if (product is null || !request.Scope.Covers(product))
+            throw new ProductNotFoundException(request.Id);
 
         var result = _mapper.Map<ProductDto>(product);
 
