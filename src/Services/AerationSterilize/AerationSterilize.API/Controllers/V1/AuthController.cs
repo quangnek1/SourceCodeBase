@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 using AerationSterilize.API.Abstractions;
-using AerationSterilize.API.Authorization;
+using Infrastructure.Authorization;
 using AerationSterilize.Application.Features.V1.Auth.Commands.Login;
 using AerationSterilize.Application.Features.V1.Auth.Commands.Logout;
 using AerationSterilize.Application.Features.V1.Auth.Commands.RefreshToken;

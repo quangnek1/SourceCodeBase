@@ -1,6 +1,6 @@
 using Asp.Versioning;
 using CommonServices.API.Abstractions;
-using CommonServices.API.Authorization;
+using Infrastructure.Authorization;
 using CommonServices.Application.Features.V1.Banks.Commands.CreateBank;
 using CommonServices.Application.Features.V1.Banks.Commands.DeleteBank;
 using CommonServices.Application.Features.V1.Banks.Commands.SetBankStatus;

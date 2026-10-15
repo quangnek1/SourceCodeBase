@@ -3,11 +3,27 @@ using AerationSterilize.Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Shared.Common.Constants.Authorization;
 using Action = AerationSterilize.Domain.Entities.Identity.Action;
 
 namespace AerationSterilize.Persistence;
 public class ApplicationContextSeed
 {
+    private static readonly Guid AdminRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
+
+    private static readonly string[] FunctionIds =
+    [
+        FunctionCode.DASHBOARD, FunctionCode.SYSTEM, FunctionCode.USER, FunctionCode.ROLE, FunctionCode.PRODUCT,
+        FunctionCode.MASTER_DATA, FunctionCode.LANGUAGE, FunctionCode.REGION, FunctionCode.CURRENCY,
+        FunctionCode.COUNTRY, FunctionCode.CITY, FunctionCode.BANK
+    ];
+
+    private static readonly string[] ActionIds =
+    [
+        CommandCode.VIEW, CommandCode.CREATE, CommandCode.UPDATE, CommandCode.DELETE,
+        CommandCode.ACTIVATE, CommandCode.INACTIVATE
+    ];
+
     private readonly ApplicationDbContext _context;
     private readonly UserManager<AppUser> _userManager;
     private readonly RoleManager<AppRole> _roleManager;
@@ -69,7 +85,7 @@ public class ApplicationContextSeed
         {
             new AppRole
             {
-                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                Id = AdminRoleId,
                 Name = "Administrator",
                 NormalizedName = "ADMINISTRATOR",
                 RoleCode = "ADMIN",
@@ -130,74 +146,98 @@ public class ApplicationContextSeed
         }
     }
 
+    // Functions, actions and permissions are additive: entries missing from an existing database are inserted,
+    // so new functions (e.g. the CommonServices master data) reach databases that were seeded before them.
     private async Task SeedFunctionsAsync()
     {
-        if (await _context.Functions.AnyAsync()) return;
-
         var functions = new[]
         {
-            new Function { Id = "DASHBOARD", Name = "Dashboard", Url = "/dashboard", ParrentId = string.Empty, SortOrder = 1, CssClass = "fa-dashboard", IsActive = true },
-            new Function { Id = "SYSTEM",    Name = "System",    Url = "/system",    ParrentId = string.Empty, SortOrder = 2, CssClass = "fa-cogs",      IsActive = true },
-            new Function { Id = "USER",      Name = "User",      Url = "/system/user", ParrentId = "SYSTEM", SortOrder = 1, CssClass = "fa-user",   IsActive = true },
-            new Function { Id = "ROLE",      Name = "Role",      Url = "/system/role", ParrentId = "SYSTEM", SortOrder = 2, CssClass = "fa-users",  IsActive = true },
-            new Function { Id = "PRODUCT",   Name = "Product",   Url = "/product",   ParrentId = string.Empty, SortOrder = 3, CssClass = "fa-cube",       IsActive = true }
+            new Function { Id = FunctionCode.DASHBOARD,   Name = "Dashboard",   Url = "/dashboard",            ParrentId = string.Empty,            SortOrder = 1, CssClass = "fa-dashboard", IsActive = true },
+            new Function { Id = FunctionCode.SYSTEM,      Name = "System",      Url = "/system",               ParrentId = string.Empty,            SortOrder = 2, CssClass = "fa-cogs",      IsActive = true },
+            new Function { Id = FunctionCode.USER,        Name = "User",        Url = "/system/user",          ParrentId = FunctionCode.SYSTEM,      SortOrder = 1, CssClass = "fa-user",      IsActive = true },
+            new Function { Id = FunctionCode.ROLE,        Name = "Role",        Url = "/system/role",          ParrentId = FunctionCode.SYSTEM,      SortOrder = 2, CssClass = "fa-users",     IsActive = true },
+            new Function { Id = FunctionCode.PRODUCT,     Name = "Product",     Url = "/product",              ParrentId = string.Empty,            SortOrder = 3, CssClass = "fa-cube",      IsActive = true },
+
+            // Master data (CommonServices)
+            new Function { Id = FunctionCode.MASTER_DATA, Name = "Master Data", Url = "/master-data",          ParrentId = string.Empty,            SortOrder = 4, CssClass = "fa-database",  IsActive = true },
+            new Function { Id = FunctionCode.LANGUAGE,    Name = "Language",    Url = "/master-data/language", ParrentId = FunctionCode.MASTER_DATA, SortOrder = 1, CssClass = "fa-language",  IsActive = true },
+            new Function { Id = FunctionCode.REGION,      Name = "Region",      Url = "/master-data/region",   ParrentId = FunctionCode.MASTER_DATA, SortOrder = 2, CssClass = "fa-globe",     IsActive = true },
+            new Function { Id = FunctionCode.CURRENCY,    Name = "Currency",    Url = "/master-data/currency", ParrentId = FunctionCode.MASTER_DATA, SortOrder = 3, CssClass = "fa-money",     IsActive = true },
+            new Function { Id = FunctionCode.COUNTRY,     Name = "Country",     Url = "/master-data/country",  ParrentId = FunctionCode.MASTER_DATA, SortOrder = 4, CssClass = "fa-flag",      IsActive = true },
+            new Function { Id = FunctionCode.CITY,        Name = "City",        Url = "/master-data/city",     ParrentId = FunctionCode.MASTER_DATA, SortOrder = 5, CssClass = "fa-building",  IsActive = true },
+            new Function { Id = FunctionCode.BANK,        Name = "Bank",        Url = "/master-data/bank",     ParrentId = FunctionCode.MASTER_DATA, SortOrder = 6, CssClass = "fa-bank",      IsActive = true }
         };
 
-        await _context.Functions.AddRangeAsync(functions);
-        _logger.Information("Seeded {Count} functions.", functions.Length);
+        var existingIds = await _context.Functions.Select(f => f.Id).ToListAsync();
+        var missing = functions.Where(f => !existingIds.Contains(f.Id)).ToList();
+        if (missing.Count == 0) return;
+
+        await _context.Functions.AddRangeAsync(missing);
+        _logger.Information("Seeded {Count} functions.", missing.Count);
     }
 
     private async Task SeedActionsAsync()
     {
-        if (await _context.Actions.AnyAsync()) return;
-
         var actions = new[]
         {
-            new Action { Id = "VIEW",   Name = "View",   SortOrder = 1, IsActive = true },
-            new Action { Id = "CREATE", Name = "Create", SortOrder = 2, IsActive = true },
-            new Action { Id = "UPDATE", Name = "Update", SortOrder = 3, IsActive = true },
-            new Action { Id = "DELETE", Name = "Delete", SortOrder = 4, IsActive = true }
+            new Action { Id = CommandCode.VIEW,       Name = "View",       SortOrder = 1, IsActive = true },
+            new Action { Id = CommandCode.CREATE,     Name = "Create",     SortOrder = 2, IsActive = true },
+            new Action { Id = CommandCode.UPDATE,     Name = "Update",     SortOrder = 3, IsActive = true },
+            new Action { Id = CommandCode.DELETE,     Name = "Delete",     SortOrder = 4, IsActive = true },
+            new Action { Id = CommandCode.ACTIVATE,   Name = "Activate",   SortOrder = 5, IsActive = true },
+            new Action { Id = CommandCode.INACTIVATE, Name = "Inactivate", SortOrder = 6, IsActive = true }
         };
 
-        await _context.Actions.AddRangeAsync(actions);
-        _logger.Information("Seeded {Count} actions.", actions.Length);
+        var existingIds = await _context.Actions.Select(a => a.Id).ToListAsync();
+        var missing = actions.Where(a => !existingIds.Contains(a.Id)).ToList();
+        if (missing.Count == 0) return;
+
+        await _context.Actions.AddRangeAsync(missing);
+        _logger.Information("Seeded {Count} actions.", missing.Count);
     }
 
     private async Task SeedActionInFunctionsAsync()
     {
-        if (await _context.ActionInFunctions.AnyAsync()) return;
+        var existing = (await _context.ActionInFunctions.Select(x => new { x.FunctionId, x.ActionId }).ToListAsync())
+            .Select(x => (x.FunctionId, x.ActionId))
+            .ToHashSet();
 
-        var functionIds = new[] { "DASHBOARD", "SYSTEM", "USER", "ROLE", "PRODUCT" };
-        var actionIds = new[] { "VIEW", "CREATE", "UPDATE", "DELETE" };
-
-        var actionInFunctions = functionIds
-            .SelectMany(f => actionIds.Select(a => new ActionInFunction { FunctionId = f, ActionId = a }))
+        var missing = FunctionActionPairs()
+            .Where(p => !existing.Contains(p))
+            .Select(p => new ActionInFunction { FunctionId = p.FunctionId, ActionId = p.ActionId })
             .ToList();
+        if (missing.Count == 0) return;
 
-        await _context.ActionInFunctions.AddRangeAsync(actionInFunctions);
-        _logger.Information("Seeded {Count} action-in-functions.", actionInFunctions.Count);
+        await _context.ActionInFunctions.AddRangeAsync(missing);
+        _logger.Information("Seeded {Count} action-in-functions.", missing.Count);
     }
 
     private async Task SeedPermissionsAsync()
     {
-        if (await _context.Permissions.AnyAsync()) return;
+        var existing = (await _context.Permissions
+                .Where(p => p.RoleId == AdminRoleId)
+                .Select(p => new { p.FunctionId, p.ActionId })
+                .ToListAsync())
+            .Select(x => (x.FunctionId, x.ActionId))
+            .ToHashSet();
 
-        var adminRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-        var functionIds = new[] { "DASHBOARD", "SYSTEM", "USER", "ROLE", "PRODUCT" };
-        var actionIds = new[] { "VIEW", "CREATE", "UPDATE", "DELETE" };
-
-        var permissions = functionIds
-            .SelectMany(f => actionIds.Select(a => new Permission
+        var missing = FunctionActionPairs()
+            .Where(p => !existing.Contains(p))
+            .Select(p => new Permission
             {
-                RoleId = adminRoleId,
-                FunctionId = f,
-                ActionId = a
-            }))
+                RoleId = AdminRoleId,
+                FunctionId = p.FunctionId,
+                ActionId = p.ActionId
+            })
             .ToList();
+        if (missing.Count == 0) return;
 
-        await _context.Permissions.AddRangeAsync(permissions);
-        _logger.Information("Seeded {Count} permissions for Administrator.", permissions.Count);
+        await _context.Permissions.AddRangeAsync(missing);
+        _logger.Information("Seeded {Count} permissions for Administrator.", missing.Count);
     }
+
+    private static IEnumerable<(string FunctionId, string ActionId)> FunctionActionPairs()
+        => FunctionIds.SelectMany(f => ActionIds.Select(a => (f, a)));
 
     private async Task SeedProductsAsync()
     {

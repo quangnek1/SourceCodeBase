@@ -1,6 +1,6 @@
 using Asp.Versioning;
 using CommonServices.API.Abstractions;
-using CommonServices.API.Authorization;
+using Infrastructure.Authorization;
 using CommonServices.Application.Features.V1.Countries.Commands.CreateCountry;
 using CommonServices.Application.Features.V1.Countries.Commands.DeleteCountry;
 using CommonServices.Application.Features.V1.Countries.Commands.SetCountryStatus;

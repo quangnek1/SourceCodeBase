@@ -15,7 +15,7 @@ public sealed class CurrentUser : ICurrentUser
     public Guid UserId => Guid.Parse(_user.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     public Guid? DepartmentId =>
-        Guid.TryParse(_user.FindFirstValue("department_id"), out var id) ? id : null;
+        Guid.TryParse(_user.FindFirstValue(UserClaim.DepartmentId), out var id) ? id : null;
 
     public string? TokenId => _user.FindFirstValue(JwtRegisteredClaimNames.Jti);
 

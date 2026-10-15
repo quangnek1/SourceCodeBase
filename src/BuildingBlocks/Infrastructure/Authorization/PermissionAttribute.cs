@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace CommonServices.API.Authorization;
+namespace Infrastructure.Authorization;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
 public class PermissionAttribute : AuthorizeAttribute, IAuthorizationRequirementData

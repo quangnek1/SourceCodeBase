@@ -1,6 +1,6 @@
 using Asp.Versioning;
 using CommonServices.API.Abstractions;
-using CommonServices.API.Authorization;
+using Infrastructure.Authorization;
 using CommonServices.Application.Features.V1.Regions.Commands.CreateRegion;
 using CommonServices.Application.Features.V1.Regions.Commands.DeleteRegion;
 using CommonServices.Application.Features.V1.Regions.Commands.SetRegionStatus;

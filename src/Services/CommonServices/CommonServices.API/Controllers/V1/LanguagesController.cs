@@ -1,6 +1,6 @@
 using Asp.Versioning;
 using CommonServices.API.Abstractions;
-using CommonServices.API.Authorization;
+using Infrastructure.Authorization;
 using CommonServices.Application.Features.V1.Languages.Commands.CreateLanguage;
 using CommonServices.Application.Features.V1.Languages.Commands.DeleteLanguage;
 using CommonServices.Application.Features.V1.Languages.Commands.SetLanguageStatus;

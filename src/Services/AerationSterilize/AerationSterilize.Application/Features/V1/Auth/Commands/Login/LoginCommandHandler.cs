@@ -77,7 +77,7 @@ internal class LoginCommandHandler : ICommandHandler<LoginCommand, LoginDto>
         //}
 
 
-        var tokenRequest = new TokenRequest(user.Id, user.UserName!, roleNames, permissions);
+        var tokenRequest = new TokenRequest(user.Id, user.UserName!, user.DepartmentId, roleNames, permissions);
         var token = _tokenService.GetToken(tokenRequest);
 
         var userSession = new UserSession

@@ -1,5 +1,5 @@
 using AerationSterilize.API.Abstractions;
-using AerationSterilize.API.Authorization;
+using Infrastructure.Authorization;
 using AerationSterilize.Application.Features.V1.Permissions.Commands.UpdateRolePermissions;
 using AerationSterilize.Application.Features.V1.Permissions.Common.Dtos;
 using AerationSterilize.Application.Features.V1.Permissions.Queries.GetRolePermissions;

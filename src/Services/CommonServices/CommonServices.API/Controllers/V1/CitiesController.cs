@@ -1,6 +1,6 @@
 using Asp.Versioning;
 using CommonServices.API.Abstractions;
-using CommonServices.API.Authorization;
+using Infrastructure.Authorization;
 using CommonServices.Application.Features.V1.Cities.Commands.CreateCity;
 using CommonServices.Application.Features.V1.Cities.Commands.DeleteCity;
 using CommonServices.Application.Features.V1.Cities.Commands.SetCityStatus;

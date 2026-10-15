@@ -35,3 +35,8 @@ public static class PermissionClaim
     // "PRODUCT" + "VIEW" => "PRODUCT.VIEW"
     public static string Build(string functionId, string actionId) => $"{functionId}.{actionId}";
 }
+
+public static class UserClaim
+{
+    public const string DepartmentId = "department_id";
+}

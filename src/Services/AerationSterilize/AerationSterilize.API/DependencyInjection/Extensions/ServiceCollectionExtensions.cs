@@ -1,11 +1,10 @@
-﻿using AerationSterilize.API.Authorization;
-using AerationSterilize.API.Services;
+﻿using AerationSterilize.API.Services;
 using AerationSterilize.Application.Common;
 using AerationSterilize.Application.DependencyInjection.Extensions;
 using AerationSterilize.Persistence.Services;
 using Contracts.Identity;
+using Infrastructure.Extensions;
 using Infrastructure.Identity;
-using Microsoft.AspNetCore.Authorization;
 
 namespace AerationSterilize.API.DependencyInjection.Extensions;
 
@@ -24,7 +23,7 @@ public static class ServiceCollectionExtensions
         var origins = configuration["AllowOrigins"];
 
         services.AddTransient<ITokenService, TokenService>();
-        services.AddConfigureJWTAuthentication(configuration);
+        services.AddJwtAuthentication(configuration);
         services.AddCors(option =>
         {
             option.AddPolicy("CorsPolicy", buider =>
@@ -39,9 +38,7 @@ public static class ServiceCollectionExtensions
     public static void AddAuthorizationConfigurationAPI(this IServiceCollection services)
     {
         services.AddScoped<IPermissionService, PermissionService>();
-        services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
-        services.AddAuthorization();
-        services.AddHttpContextAccessor();
+        services.AddPermissionAuthorization();
         services.AddScoped<ICurrentUser, CurrentUser>();
     }
 
