@@ -15,6 +15,12 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
+    /// <summary>
+    /// Handler xu ly
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     public async Task<Result<Guid>> Handle(CreateProductCommand request, CancellationToken cancellationToken)
     {
         var productEntity = _mapper.Map<Product>(request);
