@@ -9,5 +9,8 @@ public sealed record CreateProductCommand(
     string Description
 ) : ICommand<Guid>, ICacheInvalidator
 {
+    /// <summary>
+    /// Bo sung cached
+    /// </summary>
     IEnumerable<string> ICacheInvalidator.CacheKeyPrefixes => [ProductCacheKeys.Prefix];
 }
