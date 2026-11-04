@@ -10,6 +10,9 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
 {
     private readonly IRepositoryBase<Product, Guid> _productRepository;
 
+    /// <summary>
+    /// Khoi tao DeleteProductCommandHandler (task sp-1942 commit 2)
+    /// </summary>
     public DeleteProductCommandHandler(IRepositoryBase<Product, Guid> productRepository)
     {
         _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
