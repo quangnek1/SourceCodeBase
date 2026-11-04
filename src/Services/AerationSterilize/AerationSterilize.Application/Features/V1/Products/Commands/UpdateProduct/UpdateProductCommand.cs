@@ -13,6 +13,9 @@ public sealed class UpdateProductCommand : ICommand<ProductDto>, ICacheInvalidat
 
     IEnumerable<string> ICacheInvalidator.CacheKeyPrefixes => [ProductCacheKeys.Prefix];
 
+    /// <summary>
+    /// Gan Id cho Product can cap nhat (task sp-1942 commit 2)
+    /// </summary>
     public void SetId(Guid id)
     {
         Id = id;
