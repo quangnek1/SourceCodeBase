@@ -49,6 +49,13 @@ public class AuthController : ApiController
         });
     }
 
+    /// <summary>
+    /// Hàm đăng ký tài khoang
+    /// sp-1801
+    /// </summary>
+    /// <param name="command"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
     // Accounts are created by an administrator; open self-registration is not allowed.
     [HttpPost]
     [Route("register")]

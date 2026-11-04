@@ -1,4 +1,4 @@
-﻿using AerationSterilize.Domain.Entities;
+using AerationSterilize.Domain.Entities;
 using AutoMapper;
 using Contracts.Common.Messages;
 using Contracts.Common.Repositories;
@@ -16,7 +16,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     /// <summary>
-    /// Handler xu ly
+    /// Handler xu ly tao moi Product (task sp-1801)
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
