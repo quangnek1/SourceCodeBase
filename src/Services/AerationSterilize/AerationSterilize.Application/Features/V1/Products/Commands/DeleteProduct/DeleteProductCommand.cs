@@ -3,6 +3,9 @@ using Contracts.Caching;
 using Contracts.Common.Messages;
 
 namespace AerationSterilize.Application.Features.V1.Products.Commands.DeleteProduct;
+/// <summary>
+/// Command xoa Product theo Id (task sp-1942)
+/// </summary>
 public sealed record DeleteProductCommand(Guid Id) : ICommand, ICacheInvalidator
 {
     IEnumerable<string> ICacheInvalidator.CacheKeyPrefixes => [ProductCacheKeys.Prefix];
