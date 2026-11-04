@@ -3,6 +3,9 @@ using Contracts.Caching;
 using Contracts.Common.Messages;
 
 namespace AerationSterilize.Application.Features.V1.Products.Commands.CreateProduct;
+/// <summary>
+/// Command tao moi Product (task sp-1801)
+/// </summary>
 public sealed record CreateProductCommand(
     string Name,
     decimal Price,
