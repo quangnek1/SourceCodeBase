@@ -1,4 +1,4 @@
-﻿using AerationSterilize.Domain.Entities;
+using AerationSterilize.Domain.Entities;
 using AutoMapper;
 using static AerationSterilize.Domain.Exceptions.ProductException;
 using Contracts.Common.Messages;
@@ -15,6 +15,9 @@ internal sealed class DeleteProductCommandHandler : ICommandHandler<DeleteProduc
         _productRepository = productRepository ?? throw new ArgumentNullException(nameof(productRepository));
     }
 
+    /// <summary>
+    /// Handler xu ly xoa Product (task sp-1942)
+    /// </summary>
     public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
         var productEntity = await _productRepository.FindByIdAsync(request.Id, cancellationToken)
