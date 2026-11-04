@@ -4,7 +4,7 @@ using Contracts.Common.Messages;
 
 namespace AerationSterilize.Application.Features.V1.Products.Commands.CreateProduct;
 /// <summary>
-/// Command tao moi Product (task sp-1801)
+/// Command tao moi Product (task sp-1801 - fix bug QC)
 /// </summary>
 public sealed record CreateProductCommand(
     string Name,
