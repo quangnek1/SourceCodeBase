@@ -16,7 +16,7 @@ internal sealed class CreateProductCommandHandler : ICommandHandler<CreateProduc
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     /// <summary>
-    /// Handler xu ly tao moi Product (task sp-1801)
+    /// Handler xu ly tao moi Product (task sp-1801 - fix bug QC)
     /// </summary>
     /// <param name="request"></param>
     /// <param name="cancellationToken"></param>
